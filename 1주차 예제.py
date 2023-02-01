@@ -2108,9 +2108,205 @@ df['links'] = links
 print(df)                    
 #=============================================================================================                    
 #=============================================================================================
+         
+#=============================================================================================                    
+#=============================================================================================
+         
+#=============================================================================================                    
+#=============================================================================================
                     
 #=============================================================================================                    
+#2주차 Part2-3 ~ Part 3끝까지
+#황인준
+<예제 2-10> Excelwriter 활용
+# 판다스 DataFrame() 함수로 데이터프레임 변환. 변수 df1, df2에 저장  딕셔너리 -> 데이터프레임
+data1 = {'name' : [ 'Jerry', 'Riah', 'Paul'],
+         'algol' : [ "A", "A+", "B"],
+         'basic' : [ "C", "B", "B+"],
+          'c++' : [ "B+", "C", "C+"]}
+
+data2 = {'c0':[1,2,3], 
+         'c1':[4,5,6], 
+         'c2':[7,8,9], 
+         'c3':[10,11,12], 
+         'c4':[13,14,15]}
+
+df1 = pd.DataFrame(data1)         
+df1.set_index('name', inplace=True)      #name 열을 인덱스로 지정
+print(df1)
+print('\n')
+"""
+      algol basic c++
+name                 
+Jerry     A     C  B+
+Riah     A+     B   C
+Paul      B    B+  C+
+"""           
                     
+df2 = pd.DataFrame(data2)
+df2.set_index('c0', inplace=True)        #c0 열을 인덱스로 지정
+print(df2)
+"""
+    c1  c2  c3  c4
+c0                
+1    4   7  10  13
+2    5   8  11  14
+3    6   9  12  15
+"""           
+                    
+                    
+# df1을 'sheet1'으로, df2를 'sheet2'로 저장 (엑셀파일명은 "df_excelwriter.xlsx")
+writer = pd.ExcelWriter("./df_excelwriter.xlsx")
+df1.to_excel(writer, sheet_name="sheet1")
+df2.to_excel(writer, sheet_name="sheet2")
+writer.save()                    
+"""
+해당 코드 실행 시, FutureWarning: save is not part of the public API, usage can give unexpected results and will be removed in a future version  writer.save()
+에러가 발생함.
+해당 에러는 파일이 수정되면 변경될수 있다는것으로, writer.save()를 writer.close()로 바꾸면 해결 가능
+"""
+
+#================================
+<예제 3-1> 데이터 살펴보기
+                    
+# read_csv() 함수로 df 생성
+df = pd.read_csv('./auto-mpg.csv', header=None) #header=None : 첫 행부터 다 데이터. 열이름을 따로 설정해줌
+
+# 열 이름을 지정
+df.columns = ['mpg','cylinders','displacement','horsepower','weight',
+              'acceleration','model year','origin','name']
+
+# 데이터프레임 df의 내용을 일부 확인 
+print(df.head())     # 처음 5개의 행, 기본값이 5행 head()안에 몇 행 불러올지 지정 가능
+print('\n')
+print(df.tail())     # 마지막 5개의 행, 기본값이 5행 tail()안에 몇 행 불러올지 지정 가능
+"""
+    mpg  cylinders  displacement  ... model year  origin                       name
+0  18.0          8         307.0  ...         70       1  chevrolet chevelle malibu
+1  15.0          8         350.0  ...         70       1          buick skylark 320
+2  18.0          8         318.0  ...         70       1         plymouth satellite
+3  16.0          8         304.0  ...         70       1              amc rebel sst
+4  17.0          8         302.0  ...         70       1                ford torino
+
+[5 rows x 9 columns]
+
+
+      mpg  cylinders  displacement  ... model year  origin             name
+393  27.0          4         140.0  ...         82       1  ford mustang gl
+394  44.0          4          97.0  ...         82       2        vw pickup
+395  32.0          4         135.0  ...         82       1    dodge rampage
+396  28.0          4         120.0  ...         82       1      ford ranger
+397  31.0          4         119.0  ...         82       1       chevy s-10
+
+[5 rows x 9 columns]
+"""
+# pd.set_option('display.max_columns', None) 함수로, 중략되는 열을 전부 다 표시 가능. columns를 rows로 바꿔서 행도 전부 표시 가능.                    
+# df의 모양과 크기 확인: (행의 개수, 열의 개수)를 투플로 반환 #투플: 읽기만 되는 리스트
+print(df.shape) #(row , column) 의 형태로 몇행 몇열짜리 데이터베이스인지 반환
+print('\n')
+"""
+(398, 9)
+"""
+# 데이터프레임 df의 내용 확인 
+print(df.info())
+print('\n')
+"""
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 398 entries, 0 to 397
+Data columns (total 9 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   mpg           398 non-null    float64
+ 1   cylinders     398 non-null    int64  
+ 2   displacement  398 non-null    float64
+ 3   horsepower    398 non-null    object 
+ 4   weight        398 non-null    float64
+ 5   acceleration  398 non-null    float64
+ 6   model year    398 non-null    int64  
+ 7   origin        398 non-null    int64  
+ 8   name          398 non-null    object 
+dtypes: float64(4), int64(3), object(2)
+memory usage: 28.1+ KB
+None
+
+"""
+# 데이터프레임 df의 자료형 확인 
+print(df.dtypes)
+print('\n')
+"""
+mpg             float64
+cylinders         int64
+displacement    float64
+horsepower       object
+weight          float64
+acceleration    float64
+model year        int64
+origin            int64
+name             object
+dtype: object
+
+"""
+# 시리즈(mog 열)의 자료형 확인 
+print(df.mpg.dtypes)
+print('\n')
+"""
+float64
+"""
+# 데이터프레임 df의 기술통계 정보 확인 
+print(df.describe())
+print('\n')
+print(df.describe(include='all'))
+"""
+              mpg   cylinders  ...  model year      origin
+count  398.000000  398.000000  ...  398.000000  398.000000
+mean    23.514573    5.454774  ...   76.010050    1.572864
+std      7.815984    1.701004  ...    3.697627    0.802055
+min      9.000000    3.000000  ...   70.000000    1.000000
+25%     17.500000    4.000000  ...   73.000000    1.000000
+50%     23.000000    4.000000  ...   76.000000    1.000000
+75%     29.000000    8.000000  ...   79.000000    2.000000
+max     46.600000    8.000000  ...   82.000000    3.000000
+
+[8 rows x 7 columns]
+
+
+               mpg   cylinders  ...      origin        name
+count   398.000000  398.000000  ...  398.000000         398
+unique         NaN         NaN  ...         NaN         305
+top            NaN         NaN  ...         NaN  ford pinto
+freq           NaN         NaN  ...         NaN           6
+mean     23.514573    5.454774  ...    1.572864         NaN
+std       7.815984    1.701004  ...    0.802055         NaN
+min       9.000000    3.000000  ...    1.000000         NaN
+25%      17.500000    4.000000  ...    1.000000         NaN
+50%      23.000000    4.000000  ...    1.000000         NaN
+75%      29.000000    8.000000  ...    2.000000         NaN
+max      46.600000    8.000000  ...    3.000000         NaN
+
+[11 rows x 9 columns]
+
+"""                    
+#================================
+                    
+#================================
+                    
+#================================
+                    
+#================================
+                    
+#================================
+                    
+#================================
+                    
+#================================
+                    
+#============================================================================================= 
+#김태현                    
+#============================================================================================= 
+#박연주                    
+#============================================================================================= 
+#이준형                    
+#=============================================================================================                     
                     
                     
                     
