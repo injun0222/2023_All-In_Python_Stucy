@@ -2167,7 +2167,7 @@ writer.save()
 """
 
 #================================
-<예제 3-1> 데이터 살펴보기
+<예제 3-1,2> 데이터 살펴보기 ~ 데이터 개수 
                     
 # read_csv() 함수로 df 생성
 df = pd.read_csv('./auto-mpg.csv', header=None) #header=None : 첫 행부터 다 데이터. 열이름을 따로 설정해줌
@@ -2285,11 +2285,203 @@ max      46.600000    8.000000  ...    3.000000         NaN
 
 [11 rows x 9 columns]
 
+"""                   
+# 데이터프레임 df의 각 열이 가지고 있는 원소 개수 확인 
+print(df.count())
+print('\n')
+"""
+mpg             398
+cylinders       398
+displacement    398
+horsepower      398
+weight          398
+acceleration    398
+model year      398
+origin          398
+name            398
+dtype: int64
+"""
+# df.count()가 반환하는 객체 타입 출력  -> 데이터프레임의 count연산은 그냥 count()나 value_counts()나 시리즈가 나온다.
+print(type(df.count()))
+print('\n')
+"""
+<class 'pandas.core.series.Series'>
+"""
+# 데이터프레임 df의 특정 열이 가지고 있는 고유값 확인 
+unique_values = df['origin'].value_counts() 
+print(unique_values)
+print('\n')
+"""
+1    249
+3     79
+2     70
+Name: origin, dtype: int64
+"""
+# value_counts 메소드가 반환하는 객체 타입 출력
+print(type(unique_values))
+"""
+<class 'pandas.core.series.Series'>
 """                    
 #================================
+<예제 3-3>평균값, 중간값, 최대값, 최소값, 표준편차, 상관계수                    
+특이사항
+평균값: 산술데이터만 계산
+-> 산술데이터만 계산하는 통계함수에 문자데이터가 있는 데이터를 입력할 시,
+FutureWarning: The default value of numeric_only in DataFrame.mean is deprecated. In a future version, it will default to False. In addition, specifying 'numeric_only=None' is deprecated. Select only valid columns or specify the value of numeric_only to silence this warning.  print(df.mean())
+에러메세지가 출력됨. 작동은 하니 무시
+중간값: 산술데이터만 계산
+최대값: 모든 데이터에대해 계산. 문자열의 경우 아스키코드로 변환하여 대소 비교. 숫자에 글자나 문자가 섞이면 문자열로 인식
+최소값: 최대값과 동일                    
+표준편차: 산술데이터만 계산
+상관계수: 산술데이터에 계산, [열 * 열] 사이즈의 데이터프레임이 반환됨     
+# read_csv() 함수로 df 생성
+df = pd.read_csv('./auto-mpg.csv', header=None)
+
+# 열 이름을 지정
+df.columns = ['mpg','cylinders','displacement','horsepower','weight',
+              'acceleration','model year','origin','name']
+
+# 평균값 
+print(df.mean())
+print('\n')
+print(df['mpg'].mean())
+print(df.mpg.mean())
+print('\n')
+print(df[['mpg','weight']].mean())
+"""
+mpg               23.514573
+cylinders          5.454774
+displacement     193.425879
+weight          2970.424623
+acceleration      15.568090
+model year        76.010050
+origin             1.572864
+dtype: float64
+
+
+23.514572864321607
+23.514572864321607
+
+
+mpg         23.514573
+weight    2970.424623
+dtype: float64
+""" 
+# 중간값 
+print(df.median())
+print('\n')
+print(df['mpg'].median())
+"""
+mpg               23.0
+cylinders          4.0
+displacement     148.5
+weight          2803.5
+acceleration      15.5
+model year        76.0
+origin             1.0
+dtype: float64
+
+
+23.0
+""" 
+# 최대값 
+print(df.max())
+print('\n')
+print(df['mpg'].max())
+"""
+mpg                         46.6
+cylinders                      8
+displacement               455.0
+horsepower                     ?
+weight                    5140.0
+acceleration                24.8
+model year                    82
+origin                         3
+name            vw rabbit custom
+dtype: object
+
+
+46.6
+""" 
+# 최소값 
+print(df.min())
+print('\n')
+print(df['mpg'].min())
+"""
+mpg                                 9.0
+cylinders                             3
+displacement                       68.0
+horsepower                        100.0
+weight                           1613.0
+acceleration                        8.0
+model year                           70
+origin                                1
+name            amc ambassador brougham
+dtype: object
+
+
+9.0
+""" 
+# 표준편차 
+print(df.std())
+print('\n')
+print(df['mpg'].std())
+"""
+mpg               7.815984
+cylinders         1.701004
+displacement    104.269838
+weight          846.841774
+acceleration      2.757689
+model year        3.697627
+origin            0.802055
+dtype: float64
+
+
+7.815984312565782
+""" 
+# 상관계수 
+print(df.corr())
+print('\n')
+print(df[['mpg','weight']].corr())                    
+"""
+                   mpg  cylinders  ...  model year    origin
+mpg           1.000000  -0.775396  ...    0.579267  0.563450
+cylinders    -0.775396   1.000000  ...   -0.348746 -0.562543
+displacement -0.804203   0.950721  ...   -0.370164 -0.609409
+weight       -0.831741   0.896017  ...   -0.306564 -0.581024
+acceleration  0.420289  -0.505419  ...    0.288137  0.205873
+model year    0.579267  -0.348746  ...    1.000000  0.180662
+origin        0.563450  -0.562543  ...    0.180662  1.000000
+
+[7 rows x 7 columns]
+
+
+             mpg    weight
+mpg     1.000000 -0.831741
+weight -0.831741  1.000000
+
+"""                     
                     
 #================================
-                    
+<예제 3-4> 선그래프
+import matplotlib as mp
+df = pd.read_excel('./남북한발전전력량.xlsx', engine='openpyxl')  # 데이터프레임 변환 
+
+df_ns = df.iloc[[0, 5], 3:]            # 남한, 북한 발전량 합계 데이터만 추출
+df_ns.index = ['South','North']        # 행 인덱스 변경
+df_ns.columns = df_ns.columns.map(int) # 열 이름의 자료형을 정수형으로 변경
+print(df_ns.head())
+print('\n')
+
+# 선 그래프 그리기
+df_ns.plot()
+
+# 행, 열 전치하여 다시 그리기
+tdf_ns = df_ns.T
+print(tdf_ns.head())
+print('\n')
+tdf_ns.plot()
+mp.pyplot.show() # pandas랑 matplotlib에서 plot을 사용했을때, 바로 그래프가 안 뜰시, 사용하는 코드                    
 #================================
                     
 #================================
